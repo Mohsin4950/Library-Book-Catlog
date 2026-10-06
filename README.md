@@ -5,7 +5,10 @@ Practical 10: End-to-End DevOps Pipeline | B3-G1
 ## Project status
 - R1 (Jira planning): done.
 - R2 (API, tests, feature branch, pull request, merge): done. See [docs/R2-Developer-Version-Control.md](docs/R2-Developer-Version-Control.md).
-- R3 (CI, Docker, Docker Hub) and R4 (Compose, Prometheus, Grafana): pending.
+- R3 (GitHub Actions CI, Dockerfile, Docker Hub release): CI and Docker done; Docker Hub push runs once the `DOCKERHUB_USERNAME` / `DOCKERHUB_TOKEN` secrets are set. See [docs/R3-CI-CD-Containerization.md](docs/R3-CI-CD-Containerization.md).
+- R4 (Compose, Prometheus, Grafana): pending.
+
+![CI Pipeline](https://github.com/Mohsin4950/Library-Book-Catlog/actions/workflows/ci.yml/badge.svg)
 
 ## Scope
 A small Flask REST API using an in-memory book list (no database).
@@ -30,6 +33,13 @@ curl http://localhost:5000/items
 curl -X POST -H "Content-Type: application/json" \
      -d '{"title": "Refactoring", "author": "Martin Fowler"}' \
      http://localhost:5000/items
+```
+
+## Run with Docker
+```bash
+docker build -t library-book-catalog .
+docker run -d -p 5000:5000 --name library-book-catalog library-book-catalog
+curl http://localhost:5000/health
 ```
 
 ## Jira plan
