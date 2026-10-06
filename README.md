@@ -6,7 +6,7 @@ Practical 10: End-to-End DevOps Pipeline | B3-G1
 - R1 (Jira planning): done.
 - R2 (API, tests, feature branch, pull request, merge): done. See [docs/R2-Developer-Version-Control.md](docs/R2-Developer-Version-Control.md).
 - R3 (GitHub Actions CI, Dockerfile, Docker Hub release): done - image published to Docker Hub as [mo53/library-book-catalog](https://hub.docker.com/r/mo53/library-book-catalog). See [docs/R3-CI-CD-Containerization.md](docs/R3-CI-CD-Containerization.md).
-- R4 (Compose, Prometheus, Grafana): pending.
+- R4 (Docker Compose deployment, Prometheus, Grafana): done - Prometheus target UP and Grafana dashboard. See [docs/R4-Deployment-Monitoring.md](docs/R4-Deployment-Monitoring.md).
 
 ![CI Pipeline](https://github.com/Mohsin4950/Library-Book-Catlog/actions/workflows/ci.yml/badge.svg)
 
@@ -41,6 +41,19 @@ docker build -t library-book-catalog .
 docker run -d -p 5000:5000 --name library-book-catalog library-book-catalog
 curl http://localhost:5000/health
 ```
+
+## Deploy with monitoring (Docker Compose)
+```bash
+docker compose up -d      # app + Prometheus + Grafana
+docker compose ps
+docker compose down       # stop everything
+```
+
+| Service | URL |
+| --- | --- |
+| API | http://localhost:5000 (metrics at /metrics) |
+| Prometheus | http://localhost:9090 (Status -> Target health) |
+| Grafana | http://localhost:3000/d/library-book-catalog (opens without login, read-only) |
 
 ## Jira plan
 - [Epic SCRUM-5: End-to-End DevOps Pipeline](https://library-book-catalog.atlassian.net/browse/SCRUM-5)
