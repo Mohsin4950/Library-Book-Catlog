@@ -1,6 +1,6 @@
 """Library Book Catalog - a small Flask REST API with an in-memory book list."""
 
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 
 app = Flask(__name__)
 
@@ -17,7 +17,7 @@ def index():
     return jsonify(
         {
             "service": "Library Book Catalog",
-            "endpoints": ["GET /items"],
+            "endpoints": ["GET /items", "POST /items"],
         }
     )
 
@@ -26,6 +26,25 @@ def index():
 @app.route("/items", methods=["GET"])
 def list_items():
     return jsonify(books), 200
+
+
+# SCRUM-7: Add a book to the library catalog
+@app.route("/items", methods=["POST"])
+def add_item():
+    data = request.get_json(silent=True) or {}
+    title = str(data.get("title", "")).strip()
+    author = str(data.get("author", "")).strip()
+
+    if not title or not author:
+        return jsonify({"error": "Both 'title' and 'author' are required"}), 400
+
+    book = {
+        "id": max((b["id"] for b in books), default=0) + 1,
+        "title": title,
+        "author": author,
+    }
+    books.append(book)
+    return jsonify(book), 201
 
 
 if __name__ == "__main__":
