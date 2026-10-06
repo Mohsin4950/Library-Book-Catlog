@@ -5,7 +5,7 @@ Practical 10: End-to-End DevOps Pipeline | B3-G1
 ## Project status
 - R1 (Jira planning): done.
 - R2 (API, tests, feature branch, pull request, merge): done. See [docs/R2-Developer-Version-Control.md](docs/R2-Developer-Version-Control.md).
-- R3 (GitHub Actions CI, Dockerfile, Docker Hub release): CI and Docker done; Docker Hub push runs once the `DOCKERHUB_USERNAME` / `DOCKERHUB_TOKEN` secrets are set. See [docs/R3-CI-CD-Containerization.md](docs/R3-CI-CD-Containerization.md).
+- R3 (GitHub Actions CI, Dockerfile, Docker Hub release): done - image published to Docker Hub as [mo53/library-book-catalog](https://hub.docker.com/r/mo53/library-book-catalog). See [docs/R3-CI-CD-Containerization.md](docs/R3-CI-CD-Containerization.md).
 - R4 (Compose, Prometheus, Grafana): pending.
 
 ![CI Pipeline](https://github.com/Mohsin4950/Library-Book-Catlog/actions/workflows/ci.yml/badge.svg)

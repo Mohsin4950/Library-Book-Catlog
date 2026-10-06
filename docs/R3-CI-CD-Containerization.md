@@ -15,7 +15,7 @@ package it as a Docker image and publish the image to Docker Hub using GitHub Se
 | Container image definition | `Dockerfile` |
 | Files excluded from the image | `.dockerignore` |
 | CI runs | GitHub -> Actions -> CI Pipeline |
-| Docker Hub image | `<DOCKERHUB_USERNAME>/library-book-catalog:latest` and `:<commit-sha>` |
+| Docker Hub image | `mo53/library-book-catalog:latest` and `:<commit-sha>` |
 
 ## Pipeline
 ```
@@ -61,11 +61,11 @@ $ curl http://localhost:5001/health
 ```
 
 ## Hand-off to R4
-- Image: `<DOCKERHUB_USERNAME>/library-book-catalog:latest`, container port 5000.
+- Image: `mo53/library-book-catalog:latest`, container port 5000.
 - docker-compose service example:
   ```yaml
   app:
-    image: <DOCKERHUB_USERNAME>/library-book-catalog:latest
+    image: mo53/library-book-catalog:latest
     ports: ["5000:5000"]
   ```
 - The API does not expose `/metrics` yet; add a Prometheus exporter (e.g. `prometheus-flask-exporter`) before
