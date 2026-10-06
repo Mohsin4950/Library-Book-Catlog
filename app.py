@@ -1,8 +1,13 @@
 """Library Book Catalog - a small Flask REST API with an in-memory book list."""
 
 from flask import Flask, jsonify, request
+from prometheus_flask_exporter import PrometheusMetrics
 
 app = Flask(__name__)
+
+# Exposes GET /metrics for Prometheus (request counts and latencies per endpoint)
+metrics = PrometheusMetrics(app)
+metrics.info("library_app_info", "Library Book Catalog API", version="1.0.0")
 
 # In-memory catalog (no database). Resets every time the app restarts.
 books = [
@@ -17,7 +22,7 @@ def index():
     return jsonify(
         {
             "service": "Library Book Catalog",
-            "endpoints": ["GET /items", "POST /items", "GET /health"],
+            "endpoints": ["GET /items", "POST /items", "GET /health", "GET /metrics"],
         }
     )
 

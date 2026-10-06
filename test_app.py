@@ -38,3 +38,11 @@ def test_post_item(client):
 def test_post_item_requires_title_and_author(client):
     response = client.post("/items", json={"title": "No author"})
     assert response.status_code == 400
+
+
+# Monitoring (R4): Prometheus must be able to scrape request metrics
+def test_metrics(client):
+    client.get("/items")
+    response = client.get("/metrics")
+    assert response.status_code == 200
+    assert b"flask_http_request_total" in response.data
