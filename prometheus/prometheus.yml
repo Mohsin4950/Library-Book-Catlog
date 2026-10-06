@@ -1,0 +1,12 @@
+global:
+  scrape_interval: 5s
+
+scrape_configs:
+  # The Library Book Catalog API (GET /metrics from prometheus-flask-exporter)
+  - job_name: library-app
+    static_configs:
+      - targets: ["app:5000"]
+
+  - job_name: prometheus
+    static_configs:
+      - targets: ["localhost:9090"]
