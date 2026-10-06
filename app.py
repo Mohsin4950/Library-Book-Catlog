@@ -17,7 +17,7 @@ def index():
     return jsonify(
         {
             "service": "Library Book Catalog",
-            "endpoints": ["GET /items", "POST /items"],
+            "endpoints": ["GET /items", "POST /items", "GET /health"],
         }
     )
 
@@ -45,6 +45,12 @@ def add_item():
     }
     books.append(book)
     return jsonify(book), 201
+
+
+# SCRUM-8: Check the library API health
+@app.route("/health", methods=["GET"])
+def health():
+    return jsonify({"status": "ok"}), 200
 
 
 if __name__ == "__main__":
