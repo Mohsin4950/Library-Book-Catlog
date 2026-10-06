@@ -1,0 +1,67 @@
+name: CI Pipeline
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+env:
+  IMAGE_NAME: library-book-catalog
+
+jobs:
+  # Step 1: download the project, install Python and the requirements, run the tests
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - run: pip install -r requirements.txt
+
+      - run: pytest -v
+
+  # Step 2: build the Docker image, check the container works, push it to Docker Hub
+  docker:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    env:
+      HAS_DOCKERHUB_SECRETS: ${{ secrets.DOCKERHUB_USERNAME != '' && secrets.DOCKERHUB_TOKEN != '' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: docker build -t $IMAGE_NAME:ci .
+
+      - name: Smoke test the container
+        run: |
+          docker run -d --name app -p 5000:5000 $IMAGE_NAME:ci
+          for i in $(seq 1 10); do
+            curl -fs http://localhost:5000/health && break
+            sleep 1
+          done
+          curl -fs http://localhost:5000/health
+          curl -fs http://localhost:5000/items
+          docker rm -f app
+
+      - name: Log in to Docker Hub (GitHub Secrets)
+        if: env.HAS_DOCKERHUB_SECRETS == 'true' && github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Tag and push image to Docker Hub
+        if: env.HAS_DOCKERHUB_SECRETS == 'true' && github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        run: |
+          REPO=${{ secrets.DOCKERHUB_USERNAME }}/$IMAGE_NAME
+          docker tag $IMAGE_NAME:ci $REPO:latest
+          docker tag $IMAGE_NAME:ci $REPO:${GITHUB_SHA::7}
+          docker push $REPO:latest
+          docker push $REPO:${GITHUB_SHA::7}
+
+      - name: Skip push (secrets not set)
+        if: env.HAS_DOCKERHUB_SECRETS != 'true'
+        run: echo "DOCKERHUB_USERNAME / DOCKERHUB_TOKEN secrets are not set - image built and tested but not pushed."
