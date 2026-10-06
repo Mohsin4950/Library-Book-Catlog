@@ -3,7 +3,9 @@
 Practical 10: End-to-End DevOps Pipeline | B3-G1
 
 ## Project status
-R1 planning is established. Application implementation, tests, CI, container release, deployment and monitoring evidence are pending. This README is planning documentation, not proof of a completed pipeline.
+- R1 (Jira planning): done.
+- R2 (API, tests, feature branch, pull request, merge): done. See [docs/R2-Developer-Version-Control.md](docs/R2-Developer-Version-Control.md).
+- R3 (CI, Docker, Docker Hub) and R4 (Compose, Prometheus, Grafana): pending.
 
 ## Scope
 A small Flask REST API using an in-memory book list (no database).
@@ -13,6 +15,22 @@ A small Flask REST API using an in-memory book list (no database).
 | GET | /items | List books |
 | POST | /items | Add a book |
 | GET | /health | Return a simple OK response |
+
+## Run locally
+```bash
+pip install -r requirements.txt
+python app.py          # serves on http://localhost:5000
+pytest -v              # runs the tests in test_app.py
+```
+
+Example requests:
+```bash
+curl http://localhost:5000/health
+curl http://localhost:5000/items
+curl -X POST -H "Content-Type: application/json" \
+     -d '{"title": "Refactoring", "author": "Martin Fowler"}' \
+     http://localhost:5000/items
+```
 
 ## Jira plan
 - [Epic SCRUM-5: End-to-End DevOps Pipeline](https://library-book-catalog.atlassian.net/browse/SCRUM-5)
