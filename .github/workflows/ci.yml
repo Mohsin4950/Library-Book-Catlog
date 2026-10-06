@@ -23,9 +23,30 @@ jobs:
 
       - run: pytest -v
 
+  # Step 1b: install, lint and build the React frontend
+  frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - run: npm ci
+
+      - run: npm run lint
+
+      - run: npm run build
+
   # Step 2: build the Docker image, check the container works, push it to Docker Hub
   docker:
-    needs: build-and-test
+    needs: [build-and-test, frontend]
     runs-on: ubuntu-latest
     env:
       HAS_DOCKERHUB_SECRETS: ${{ secrets.DOCKERHUB_USERNAME != '' && secrets.DOCKERHUB_TOKEN != '' }}
@@ -44,6 +65,7 @@ jobs:
           done
           curl -fs http://localhost:5000/health
           curl -fs http://localhost:5000/items
+          curl -fs http://localhost:5000/ui/ | grep -q "Library Book Catalog"
           docker rm -f app
 
       - name: Log in to Docker Hub (GitHub Secrets)
