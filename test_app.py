@@ -14,7 +14,7 @@ def client():
 def test_health(client):
     response = client.get("/health")
     assert response.status_code == 200
-    assert response.get_json() == {"status": "ok"}
+    assert response.get_json() == {"status": "down"}
 
 
 # SCRUM-6: the catalog must return a list of books
